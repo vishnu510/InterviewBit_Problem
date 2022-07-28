@@ -1,93 +1,53 @@
 #include<bits/stdc++.h>
 using namespace std;
 
-string checkIPv4(string IP){
-        int i = 0, j = 0, count = 0;
-        while(j < IP.length()){
-            if(IP[j] == '.'){
-                count++;
-                string s = IP.substr(i, j - i);
-                if(s.length() == 0)
-                    return "Neither";
-                if(s[0] == '0' and s.length()!= 1)
-                    return "Neither";
-                if(stoi(s) > 255)
-                    return "Neither";
-                i = j + 1;
-                j = j + 1;
-                if(count==3)
-                    break;
-            }
-            else
-                j = j + 1;
-        }
-        string s = IP.substr(i, IP.length() - i);
-        if(s.length() == 0)
-            return "Neither";
-        if(s[0] == '0' and s.length()!= 1)
-                    return "Neither";
-        if(stoi(s) > 255)
-                    return "Neither";
-        return "IPv4";
+bool validRange(string str){
+    if(stoi(str)>255 || stoi(str)<0) return false;
+
+    if(str.size() > 1 && str[0]=='0') return 0;
+
+    return true;
+}
+
+void getIp(string A, int idx, string ip,int ipPos,vector<string> & ans){
+
+    if(idx ==A.size() && ipPos==5){
+
+        ip = ip.substr(0,ip.size()-1);
+        ans.push_back(ip);
+        return;
     }
-    
-    string checkIPv6(string IP){
-        int i = 0, j = 0, count = 0;
-        while(j < IP.length()){
-            if(IP[j] == ':'){
-                count++;
-                string s = IP.substr(i, j - i);
-                if(s.length() < 1 or s.length() > 4)
-                    return "Neither";
-                i = j + 1;
-                j = j + 1;
-                if(count==7)
-                    break;
-            }
-            else
-                j = j + 1;
-        }
-        string s = IP.substr(i, IP.length() - j);
-        
-        if(s.length() == 0)
-            return "Neither";
-        if(s.length() < 1 or s.length() > 4)
-                    return "Neither";
-        return "IPv6";
+    if(idx >= A.size()) return;
+
+    if(idx < A.size() && ipPos > 4) return;
+
+    string str = A.substr(idx,1);
+    if(validRange(str)){
+        getIp(A,idx+1,ip+str+".",ipPos+1,ans);
     }
-    
-    string validIPAddress(string IP) {
-        int dot = 0, colon = 0;
-        for(int  i = 0; i < IP.length(); i++){
-            if(IP[i] == '.')
-                dot++;
-            if(IP[i] == ':')
-                colon++;
-        }
-        
-        if(dot == 3 and colon == 0 and IP.length() <= 15){
-            for(int i = 0; i < IP.length(); i++){
-                if(isalpha(IP[i]))
-                    return "Neither";
-            }
-            return checkIPv4(IP);
-        }
-        else if(colon == 7 and dot == 0){
-            for(int i = 0; i < IP.length(); i++){
-                if(IP[i] >= 'G' and IP[i] <= 'Z')
-                    return "Neither";
-                if(IP[i] >= 'g' and IP[i] <= 'z')
-                    return "Neither";
-            }
-            return checkIPv6(IP);
-        }
-        else
-            return "Neither";
+    str = A.substr(idx,2);
+    if(validRange(str)){
+        getIp(A,idx+2,ip+str+".",ipPos+1,ans);
     }
+    str = A.substr(idx,3);
+    if(validRange(str)){
+        getIp(A,idx+3,ip+str+".",ipPos+1,ans);
+    }
+}
+
+vector<string> restoreIpAddresses(string A){
+    vector<string> ans;
+    getIp(A,0,"",1,ans);
+    return ans;
+}
 
 int main(){
     
-    string A = "2001:0db8:85a3:0:0:8A2E:0370:7334";
-    cout<<validIPAddress(A);
+    string A = "25525511135";
+    vector<string> ans = restoreIpAddresses(A);
+
+    for(auto i:ans){
+        cout<<i<<" ";
+    }
     return 0;
 }

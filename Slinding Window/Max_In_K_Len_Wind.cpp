@@ -5,33 +5,28 @@ int  findMax(vector<int>& nums,int k){
 
     int n = nums.size();
 
-    int i=0,j=0;
-    int mx = 0;
-    vector<int> res;
-    while(j-i!=k){
-        mx+=nums[j];
-        j++;
-    }
-    res.push_back(mx);
-    for(;i<n-k+1;i++){
+    if(n<k) return -1;
 
-        mx-=nums[i];
-        mx+=nums[j];
-        res.push_back(mx);
-        j++;
+    int res = 0,i=0;
+    while(i<k){
+        res += nums[i++];
     }
 
-    int ans = INT_MIN;
-    for(auto i:res){
-        ans = max(ans,i);
+    int currSum = res;
+
+    for(int i=k;i<n;i++){
+
+        currSum += nums[i] - nums[i-k];
+
+        res = max(res,currSum);
     }
-    return ans;
+    return res;
 }
 
 int main(){
 
     vector<int> nums = {1,-4,2,8,6,-2,5};
 
-    cout<<findMax(nums,3);
+    cout<<findMax(nums,8);
     return 0;
 }

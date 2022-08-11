@@ -21,7 +21,7 @@ int coutSubsetSumWithDiffK(vector<int> & nums,int diff){
             if(nums[i-1] > j){
                 dp[i][j] = dp[i-1][j];
             }
-            if(nums[i-1] == j){
+            if(nums[i-1] <= j){
                 dp[i][j] = dp[i-1][j] + dp[i-1][j-nums[i-1]];
             }
             
